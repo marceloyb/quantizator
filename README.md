@@ -23,3 +23,23 @@ Com as dependências instaladas, realize os seguintes passos:
    - IS: caminho da imagem quantizada a ser salva;
    - ME: método de quantização (_simple_, _uniform_, ou _mediancut_);
    - ND: múmero de cores que a imagem será reduzida;
+   
+## Exemplo
+Quantização utilizando o método _SimpleQuantizer_:
+```python
+import quantizator.quantizer as qnt
+import cv2
+
+# Lê imagem arbitrária
+img = cv2.imread('input_image.png')
+
+# Escolhe método de quantização
+method = qnt.SimpleQuantizer(img)
+
+# Realiza quantização para 32 cores
+reduced = method.quantize(32)
+
+# Mostra imagem em janela e aguarda ser fechada ou tecla pressionada
+cv2.imshow('output', reduced)
+cv2.waitKey()
+```

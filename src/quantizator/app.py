@@ -18,16 +18,6 @@ def define_args():
     return parser.parse_args()
 
 
-def show(*img_defs):
-    for img_def in img_defs:
-        cv.imshow(img_def[0], img_def[1])
-
-
-def wait():
-    cv.waitKey(0)
-    cv.destroyAllWindows()
-
-
 def main():
     args = define_args()
 
@@ -56,8 +46,8 @@ def main():
     cpsrn = util.psnr(img, qnt_img)
     print('Color Peak Signal to Noise-Ratio: %f' % cpsrn)
 
-    show(('Input', img), ('Output', qnt_img))
-    wait()
+    util.show(('Input', img), ('Output', qnt_img))
+    util.wait()
 
 
 if __name__ == "__main__":

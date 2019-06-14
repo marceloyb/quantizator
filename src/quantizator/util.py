@@ -1,4 +1,5 @@
 import numpy as np
+import cv2
 
 
 def nmult(n):
@@ -55,4 +56,14 @@ def psnr(img1, img2):
         return 100
     PIXEL_MAX = 255.0
     return 20 * np.math.log10(PIXEL_MAX / np.math.sqrt(mse))
+
+
+def show(*img_defs):
+    for img_def in img_defs:
+        cv2.imshow(img_def[0], img_def[1])
+
+
+def wait():
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
 
