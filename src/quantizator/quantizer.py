@@ -1,7 +1,5 @@
 from abc import abstractmethod
 
-import copy
-
 import numpy as np
 
 import quantizator.util as util
@@ -85,7 +83,7 @@ class MedianCutQuantizer(Quantizer):
             tamanho = len(bucket)
             new_bucket = []
             for i in range(tamanho):
-                bk = np.array(bucket[i], 'uint8')
+                bk = np.array(bucket[i], int)
                 meio = util.argmedian(bk, dispersao_key)
                 a = bk[:meio]
                 b = bk[meio:]
