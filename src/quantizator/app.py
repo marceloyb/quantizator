@@ -18,6 +18,8 @@ def define_args():
 
 def show(*img_defs):
     for img_def in img_defs:
+        print(img_def[0])
+        print(img_def[1])
         cv.imshow(img_def[0], img_def[1])
 
 
@@ -35,9 +37,9 @@ def main():
 
     # Escolhe o algorítmo que será utilizado na quantização
     qnt = None
-    if args.algorithm == 'uniform':
+    if args.algorithm == 'simple':
         qnt = quant.SimpleQuantizer(img)
-    if args.algorithm == 'uniform2': 
+    elif args.algorithm == 'uniform':
         qnt = quant.UniformQuantizer(img)
     elif args.algorithm == 'mediancut':
         qnt = quant.MedianCutQuantizer(img)

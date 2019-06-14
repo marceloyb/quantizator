@@ -38,6 +38,7 @@ class SimpleQuantizer(Quantizer):
 
         return rgb
 
+
 class UniformQuantizer(Quantizer):
 
     """
@@ -46,7 +47,7 @@ class UniformQuantizer(Quantizer):
 
     def quantize(self, n):
 
-        img = self.img[:, :]
+        img = self.img
         aux = copy.deepcopy(n)
         rgbarray = []
         colorsarray = []
@@ -89,7 +90,7 @@ class UniformQuantizer(Quantizer):
         # cria a imagem nova com base na palheta
         img = palheta[indices_palheta]
 
-        return img
+        return img.astype('uint8')
 
 
 class MedianCutQuantizer(Quantizer):
@@ -114,18 +115,17 @@ class MedianCutQuantizer(Quantizer):
         colors = sorted(colors, key=lambda x: x[dispersao_key])
 
         bucket.append(colors)
-        print(colors)
-        print('bucket', bucket)
 
         # divide o bucket original em n buckets em que n = numero de cores
-        while len(bucket) <= n:
+        while len(bucket) < n:
             tamanho = len(bucket)
             new_bucket = []
             for i in range(tamanho):
-                meio = int(len(bucket[i]) / 2)
-                a = bucket[i][:meio]
-                b = bucket[i][meio:]
-                print('a', a)
+                bk = np.array(bucket[i], 'uint8')
+                meio = np.argsort(bk[:, 0])[len(bk)//2]
+                print(meio)
+                a = bk[:meio]
+                b = bk[meio:]
                 new_bucket.append(a)
                 new_bucket.append(b)
             bucket = new_bucket
