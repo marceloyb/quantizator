@@ -37,6 +37,8 @@ def main():
     qnt = None
     if args.algorithm == 'uniform':
         qnt = quant.SimpleQuantizer(img)
+    if args.algorithm == 'uniform2': 
+        qnt = quant.UniformQuantizer(img)
     elif args.algorithm == 'mediancut':
         qnt = quant.MedianCutQuantizer(img)
     else:
