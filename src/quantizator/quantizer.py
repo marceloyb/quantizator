@@ -1,5 +1,7 @@
 from abc import abstractmethod
 
+import copy
+
 import numpy as np
 
 import quantizator.util as util
@@ -35,6 +37,59 @@ class SimpleQuantizer(Quantizer):
             rgb[..., i] = np.uint8(127 if nums[i] == 1 else (aux / (nums[i] - 1.)) * 255)
 
         return rgb
+
+class UniformQuantizer(Quantizer):
+
+    """
+    Implementação da Quantização Uniforme
+    """
+
+    def quantize(self, n):
+
+        img = self.img[:, :]
+        aux = copy.deepcopy(n)
+        rgbarray = []
+        colorsarray = []
+        d = 2
+
+        # decompõe o número de cores em três
+        while aux > 1:
+            if aux % d == 0:
+                aux = aux/d
+                rgbarray.append(d)
+            else:
+                d += 1
+        # se no vetor tiver mais que 3 cores, combina elas até ficar 3. se tiver menos, preenche com 1 até ter 3
+        if (len(rgbarray) > 3):
+            while (len(rgbarray) > 3):
+                min1 = min(rgbarray)
+                rgbarray.remove(min1)
+                newmin = min1*min(rgbarray)
+                rgbarray.remove(min(rgbarray))
+                rgbarray.append(newmin)
+        else:
+            while (len(rgbarray) < 3):
+                rgbarray.append(1)
+
+        rgbarray.sort(reverse=True)
+
+        # gera o código das cores. quantidade de códigos = ncolors
+        a = np.linspace(0, 255, num = rgbarray[0], dtype = int)
+        b = np.linspace(0, 255, num = rgbarray[1], dtype = int)
+        c = np.linspace(0, 255, num = rgbarray[2], dtype = int)
+
+        palheta = np.array(np.meshgrid(a, b, c)).T.reshape(-1,3)
+    
+
+        # para cada pixel da imagem, faz a distância entre esse pixel e cada um dos elementos da palheta de cores
+        # armazena a distância como um elemento do vetor distance
+        distancia = np.linalg.norm(img[:,:,None] - palheta[None,None,:], axis=3)
+        # pega o índice de qual a cor de menor distância
+        indices_palheta = np.argmin(distancia, axis=2)
+        # cria a imagem nova com base na palheta
+        img = palheta[indices_palheta]
+
+        return img
 
 
 class MedianCutQuantizer(Quantizer):
