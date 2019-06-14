@@ -47,3 +47,12 @@ def aprox(img, palheta):
 
 def argmedian(array, column):
     return np.argsort(array[:, column])[len(array) // 2]
+
+
+def psnr(img1, img2):
+    mse = np.mean((img1 - img2) ** 2)
+    if mse == 0:
+        return 100
+    PIXEL_MAX = 255.0
+    return 20 * np.math.log10(PIXEL_MAX / np.math.sqrt(mse))
+

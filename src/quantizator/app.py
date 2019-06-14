@@ -2,6 +2,8 @@ import quantizator.quantizer as quant
 import cv2 as cv
 import argparse
 
+from quantizator import util
+
 
 def define_args():
     parser = argparse.ArgumentParser(description='Aplica um algorítmo de quantização a uma dada imagem.')
@@ -18,8 +20,6 @@ def define_args():
 
 def show(*img_defs):
     for img_def in img_defs:
-        print(img_def[0])
-        print(img_def[1])
         cv.imshow(img_def[0], img_def[1])
 
 
@@ -53,7 +53,10 @@ def main():
     if args.output is not None:
         cv.imwrite(args.output, qnt_img)
 
-    show(('Lena', img), ('Lena Quantized', qnt_img))
+    cpsrn = util.psnr(img, qnt_img)
+    print('Color Peak Signal to Noise-Ratio: %f' % cpsrn)
+
+    show(('Input', img), ('Output', qnt_img))
     wait()
 
 
