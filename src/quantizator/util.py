@@ -40,7 +40,6 @@ def nmult(n):
 
 def aprox(img, palheta):
     palheta = np.array(palheta).reshape(-1, 3)
-    print(palheta)
     distancia = np.linalg.norm(img[:, :, None] - palheta[None, None, :], axis=3)
     indices_palheta = np.argmin(distancia, axis=2)
     return palheta[indices_palheta]

@@ -29,7 +29,7 @@ class SimpleQuantizer(Quantizer):
     def quantize(self, n):
         nums = util.nmult(n)
         print('Iniciando quantização uniforme com %d cores divididas em RGB(%d, %d, %d) ...' % (
-        n, nums[0], nums[1], nums[2]))
+            n, nums[0], nums[1], nums[2]))
 
         m = np.amax(self.img) + 1
         rgb = np.zeros(self.img.shape, 'uint8')
@@ -46,8 +46,6 @@ class UniformQuantizer(Quantizer):
     """
 
     def quantize(self, n):
-
-        aux = copy.deepcopy(n)
         rgbarray = util.nmult(n)
 
         # gera o código das cores. quantidade de códigos = ncolors
@@ -98,8 +96,8 @@ class MedianCutQuantizer(Quantizer):
         # Palheta pelo pixel do meio
         # identifica a cor mediana para cada um dos buckets de cor
         for i in range(len(bucket)):
-            bk = np.array(bucket[i], 'uint8')
+            bk = np.array(bucket[i], int)
             meio = util.argmedian(bk, dispersao_key)
             palheta.append(bk[meio])
 
-        return util.aprox(self.img, palheta)
+        return util.aprox(self.img, palheta).astype('uint8')
