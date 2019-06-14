@@ -44,6 +44,9 @@ class UniformQuantizer(Quantizer):
     """
 
     def quantize(self, n):
+        # util.nmult é uma função que, para o número de cores = n, gera três números
+        # A, B e C, tal que N = A * B * C
+        
         rgbarray = util.nmult(n)
 
         # gera o código das cores. quantidade de códigos = ncolors
@@ -52,6 +55,10 @@ class UniformQuantizer(Quantizer):
         c = np.linspace(0, 255, num=rgbarray[2], dtype=int)
 
         palheta = np.array(np.meshgrid(a, b, c)).T.reshape(-1, 3)
+
+        # util.aprox é uma função que, para cada pixel da imagem de entrada
+        # faz a comparação do valor desse pixel com a palheta de cores (distancia euclidiana)
+        # o valor que for mais próximo vai ser o valor do pixel na imagem de saída
         return util.aprox(self.img, palheta).astype('uint8')
 
 
@@ -97,5 +104,9 @@ class MedianCutQuantizer(Quantizer):
             bk = np.array(bucket[i], int)
             meio = util.argmedian(bk, dispersao_key)
             palheta.append(bk[meio])
+
+        # util.aprox é uma função que, para cada pixel da imagem de entrada
+        # faz a comparação do valor desse pixel com a palheta de cores (distancia euclidiana)
+        # o valor que for mais próximo vai ser o valor do pixel na imagem de saída
 
         return util.aprox(self.img, palheta).astype('uint8')
