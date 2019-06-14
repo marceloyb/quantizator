@@ -28,7 +28,8 @@ class SimpleQuantizer(Quantizer):
 
     def quantize(self, n):
         nums = util.nmult(n)
-        print('Iniciando quantização uniforme com %d cores divididas em RGB(%d, %d, %d) ...' % (n, nums[0], nums[1], nums[2]))
+        print('Iniciando quantização uniforme com %d cores divididas em RGB(%d, %d, %d) ...' % (
+        n, nums[0], nums[1], nums[2]))
 
         m = np.amax(self.img) + 1
         rgb = np.zeros(self.img.shape, 'uint8')
@@ -40,57 +41,22 @@ class SimpleQuantizer(Quantizer):
 
 
 class UniformQuantizer(Quantizer):
-
     """
     Implementação da Quantização Uniforme
     """
 
     def quantize(self, n):
 
-        img = self.img
         aux = copy.deepcopy(n)
-        rgbarray = []
-        colorsarray = []
-        d = 2
-
-        # decompõe o número de cores em três
-        while aux > 1:
-            if aux % d == 0:
-                aux = aux/d
-                rgbarray.append(d)
-            else:
-                d += 1
-        # se no vetor tiver mais que 3 cores, combina elas até ficar 3. se tiver menos, preenche com 1 até ter 3
-        if (len(rgbarray) > 3):
-            while (len(rgbarray) > 3):
-                min1 = min(rgbarray)
-                rgbarray.remove(min1)
-                newmin = min1*min(rgbarray)
-                rgbarray.remove(min(rgbarray))
-                rgbarray.append(newmin)
-        else:
-            while (len(rgbarray) < 3):
-                rgbarray.append(1)
-
-        rgbarray.sort(reverse=True)
+        rgbarray = util.nmult(n)
 
         # gera o código das cores. quantidade de códigos = ncolors
-        a = np.linspace(0, 255, num = rgbarray[0], dtype = int)
-        b = np.linspace(0, 255, num = rgbarray[1], dtype = int)
-        c = np.linspace(0, 255, num = rgbarray[2], dtype = int)
+        a = np.linspace(0, 255, num=rgbarray[0], dtype=int)
+        b = np.linspace(0, 255, num=rgbarray[1], dtype=int)
+        c = np.linspace(0, 255, num=rgbarray[2], dtype=int)
 
-        palheta = np.array(np.meshgrid(a, b, c)).T.reshape(-1,3)
-    
-
-        # para cada pixel da imagem, faz a distância entre esse pixel e cada um dos elementos da palheta de cores
-        # armazena a distância como um elemento do vetor distance
-        distancia = np.linalg.norm(img[:,:,None] - palheta[None,None,:], axis=3)
-        # pega o índice de qual a cor de menor distância
-        indices_palheta = np.argmin(distancia, axis=2)
-        # cria a imagem nova com base na palheta
-        img = palheta[indices_palheta]
-
-        return img.astype('uint8')
+        palheta = np.array(np.meshgrid(a, b, c)).T.reshape(-1, 3)
+        return util.aprox(self.img, palheta).astype('uint8')
 
 
 class MedianCutQuantizer(Quantizer):
@@ -122,8 +88,7 @@ class MedianCutQuantizer(Quantizer):
             new_bucket = []
             for i in range(tamanho):
                 bk = np.array(bucket[i], 'uint8')
-                meio = np.argsort(bk[:, 0])[len(bk)//2]
-                print(meio)
+                meio = util.argmedian(bk, dispersao_key)
                 a = bk[:meio]
                 b = bk[meio:]
                 new_bucket.append(a)
@@ -133,23 +98,8 @@ class MedianCutQuantizer(Quantizer):
         # Palheta pelo pixel do meio
         # identifica a cor mediana para cada um dos buckets de cor
         for i in range(len(bucket)):
-            meio = int(len(bucket[i]) / 2)
-            palheta.append(bucket[i][meio])
+            bk = np.array(bucket[i], 'uint8')
+            meio = util.argmedian(bk, dispersao_key)
+            palheta.append(bk[meio])
 
-        # Palheta por média dos pixels (ta meio bugado)
-        # palheta2 = []
-        # for i in range(len(bucket)):
-        #     npbucket = np.array(bucket[i])
-        #     palheta2.append(np.array([np.mean(npbucket[:, 0]), np.mean(npbucket[:, 1]), np.mean(npbucket[:, 2])], dtype='uint8'))
-
-        palheta = np.array(palheta).reshape(-1, 3)
-        # para cada pixel da imagem, faz a distância entre esse pixel e cada um dos elementos da palheta de cores
-        # armazena a distância como um elemento do vetor distance
-        distancia = np.linalg.norm(self.img[:, :, None] - palheta[None, None, :], axis=3)
-        # pega o índice de qual a cor de menor distância
-        indices_palheta = np.argmin(distancia, axis=2)
-        # cria a imagem nova com base na palheta
-        img = palheta[indices_palheta]
-
-        return img
-
+        return util.aprox(self.img, palheta)
