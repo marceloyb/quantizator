@@ -7,9 +7,9 @@ Este programa possúi três métodos implementados para a quantização de cores
 - Quantização uniforme com espaço linear;
 - Quantização median cut;
 
-Cada uma destas implementações foi escrita separadamente em classes: _SimpleQuantizer, UniformQuantizer e MedianCutQuantizer_ reespectivamente.
+Cada uma destas implementações foi escrita separadamente em classes: _SimpleQuantizer, UniformQuantizer e MedianCutQuantizer_ respectivamente.
 <br><br>
-Para o uso destes métodos, basta istânciar a respectiva classe, passando para o contrutor a imagem a ser quantizada, e em seguida utilizar o método _quantize_, passando como parâmetro o número de cores que a imagem passará a ter.
+Para o uso destes métodos, basta istanciar a respectiva classe, passando para o construtor a imagem a ser quantizada, e em seguida utilizar o método _quantize_, passando como parâmetro o número de cores que a imagem passará a ter.
 
 ## Execução
 Antes de se executar o programa, é necessário instalar as seguintes dependências:
