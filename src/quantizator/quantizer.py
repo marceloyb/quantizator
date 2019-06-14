@@ -96,6 +96,7 @@ class MedianCutQuantizer(Quantizer):
                 b = bk[meio:]
                 new_bucket.append(a)
                 new_bucket.append(b)
+            del bucket
             bucket = new_bucket
 
         # Palheta pelo pixel do meio
@@ -104,6 +105,8 @@ class MedianCutQuantizer(Quantizer):
             bk = np.array(bucket[i], int)
             meio = util.argmedian(bk, dispersao_key)
             palheta.append(bk[meio])
+
+        del bucket
 
         # util.aprox é uma função que, para cada pixel da imagem de entrada
         # faz a comparação do valor desse pixel com a palheta de cores (distancia euclidiana)
